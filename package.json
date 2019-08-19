@@ -2,7 +2,7 @@
   "name": "@metadata/exif",
   "version": "1.0.0",
   "description": "[fork exif-js] Reads Files Metadata In The Browser And Node.JS. Optimised With Google Closure Compiler, BugFixes And New Features.",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
     "t": "zoroaster -a",
