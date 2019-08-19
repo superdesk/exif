@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "[fork exif-js] Reads Files Metadata In The Browser And Node.JS. Optimised With Google Closure Compiler, BugFixes And New Features.",
   "main": "build/index.js",
-  "module": "build/index.js",
+  "module": "src/index.js",
   "scripts": {
     "t": "zoroaster -a",
     "test": "yarn t test/spec test/mask",
@@ -51,7 +51,9 @@
     "@idio/router": "1.3.1",
     "alamode": "2.2.0",
     "documentary": "1.27.2",
+    "eslint": "^6.2.0",
     "eslint-config-artdeco": "1.0.1",
+    "eslint-plugin-react": "^7.14.3",
     "yarn-s": "1.1.0",
     "zoroaster": "4.1.1-alpha"
   }

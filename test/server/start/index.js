@@ -1,2 +1,2 @@
-require('alamode')()
-require('./start')
+require('alamode')();
+require('./start');

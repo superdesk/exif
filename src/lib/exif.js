@@ -1,49 +1,49 @@
 /* eslint-disable no-console */
-import readThumbnailImage from './thumbnail'
-import TiffTags from '../tags/tiff'
-import ExifTags from '../tags/exif'
-import GPSTags from '../tags/gps'
-import { getStringFromDB, readTags } from './'
-import { dms2dd, getDate } from './util'
+import readThumbnailImage from './thumbnail';
+import TiffTags from '../tags/tiff';
+import ExifTags from '../tags/exif';
+import GPSTags from '../tags/gps';
+import { getStringFromDB, readTags } from './';
+import { dms2dd, getDate } from './util';
 
-const debug = false
+const debug = false;
 
 /**
  * @param {!ArrayBuffer} file
  * @param {!_exif.HandleBinaryFile} [config]
  */
 export function findEXIFinJPEG(file, config) {
-  const dataView = new DataView(file)
+  const dataView = new DataView(file);
 
-  if (debug) console.log('Got file of length ' + file.byteLength)
+  if (debug) console.log('Got file of length ' + file.byteLength);
   if ((dataView.getUint8(0) != 0xFF) || (dataView.getUint8(1) != 0xD8)) {
-    if (debug) console.log('Not a valid JPEG')
-    return false // not a valid jpeg
+    if (debug) console.log('Not a valid JPEG');
+    return false; // not a valid jpeg
   }
 
-  const length = file.byteLength
-  let offset = 2, marker
+  const length = file.byteLength;
+  let offset = 2, marker;
 
   while (offset < length) {
     if (dataView.getUint8(offset) != 0xFF) {
-      if (debug) console.log('Not a valid marker at offset ' + offset + ', found: ' + dataView.getUint8(offset))
-      return false // not a valid marker, something is wrong
+      if (debug) console.log('Not a valid marker at offset ' + offset + ', found: ' + dataView.getUint8(offset));
+      return false; // not a valid marker, something is wrong
     }
 
-    marker = dataView.getUint8(offset + 1)
-    if (debug) console.log(marker)
+    marker = dataView.getUint8(offset + 1);
+    if (debug) console.log(marker);
 
     // we could implement handling for other markers here,
     // but we're only looking for 0xFFE1 for EXIF data
 
     if (marker == 225) {
-      if (debug) console.log('Found 0xFFE1 marker')
+      if (debug) console.log('Found 0xFFE1 marker');
 
-      return readEXIFData(dataView, offset + 4, config)
+      return readEXIFData(dataView, offset + 4, config);
 
       // offset += 2 + file.getShortAt(offset+2, true);
     } else {
-      offset += 2 + dataView.getUint16(offset+2)
+      offset += 2 + dataView.getUint16(offset+2);
     }
   }
 }
@@ -54,51 +54,51 @@ export function findEXIFinJPEG(file, config) {
  * @param {!_exif.HandleBinaryFile} [config]
  */
 function readEXIFData(file, start, config = {}) {
-  const { coordinates = 'dms', parseDates = false } = config
+  const { coordinates = 'dms', parseDates = false } = config;
   if (getStringFromDB(file, start, 4) != 'Exif') {
-    if (debug) console.log('Not valid EXIF data! ' + getStringFromDB(file, start, 4))
-    return false
+    if (debug) console.log('Not valid EXIF data! ' + getStringFromDB(file, start, 4));
+    return false;
   }
 
-  const tiffOffset = start + 6
-  let bigEnd
+  const tiffOffset = start + 6;
+  let bigEnd;
   // test for TIFF validity and endianness
   if (file.getUint16(tiffOffset) == 0x4949) {
-    bigEnd = false
+    bigEnd = false;
   } else if (file.getUint16(tiffOffset) == 0x4D4D) {
-    bigEnd = true
+    bigEnd = true;
   } else {
-    if (debug) console.log('Not valid TIFF data! (no 0x4949 or 0x4D4D)')
-    return false
+    if (debug) console.log('Not valid TIFF data! (no 0x4949 or 0x4D4D)');
+    return false;
   }
 
   if (file.getUint16(tiffOffset+2, !bigEnd) != 0x002A) {
-    if (debug) console.log('Not valid TIFF data! (no 0x002A)')
-    return false
+    if (debug) console.log('Not valid TIFF data! (no 0x002A)');
+    return false;
   }
 
-  const firstIFDOffset = file.getUint32(tiffOffset+4, !bigEnd)
+  const firstIFDOffset = file.getUint32(tiffOffset+4, !bigEnd);
 
   if (firstIFDOffset < 0x00000008) {
-    if (debug) console.log('Not valid TIFF data! (First offset less than 8)', file.getUint32(tiffOffset+4, !bigEnd))
-    return false
+    if (debug) console.log('Not valid TIFF data! (First offset less than 8)', file.getUint32(tiffOffset+4, !bigEnd));
+    return false;
   }
 
-  const tags = readTags(file, tiffOffset, tiffOffset + firstIFDOffset, TiffTags, bigEnd)
+  const tags = readTags(file, tiffOffset, tiffOffset + firstIFDOffset, TiffTags, bigEnd);
 
   if (parseDates && tags['DateTime']) {
-    tags['DateTime'] = getDate(tags['DateTime'])
+    tags['DateTime'] = getDate(tags['DateTime']);
   }
 
-  let tagName
+  let tagName;
   const {
     'ExifIFDPointer': ExifIFDPointer,
     'GPSInfoIFDPointer': GPSInfoIFDPointer,
-  } = tags
+  } = tags;
   if (ExifIFDPointer) {
-    const exifData = readTags(file, tiffOffset, tiffOffset + ExifIFDPointer, ExifTags, bigEnd)
+    const exifData = readTags(file, tiffOffset, tiffOffset + ExifIFDPointer, ExifTags, bigEnd);
     for (tagName in exifData) {
-      let tag = exifData[tagName]
+      let tag = exifData[tagName];
       switch (tagName) {
       case 'LightSource':
       case 'Flash':
@@ -115,58 +115,58 @@ function readEXIFData(file, start, config = {}) {
       case 'Sharpness':
       case 'SubjectDistanceRange':
       case 'FileSource':
-        tag = StringValues[tagName][tag]
-        break
+        tag = StringValues[tagName][tag];
+        break;
       case 'DateTimeOriginal':
       case 'DateTimeDigitized':
         if (parseDates) {
-          tag = getDate(tag)
+          tag = getDate(tag);
         }
-        break
+        break;
       case 'ExifVersion':
       case 'FlashpixVersion':
-        tag = String.fromCharCode(tag[0], tag[1], tag[2], tag[3])
-        break
+        tag = String.fromCharCode(tag[0], tag[1], tag[2], tag[3]);
+        break;
 
       case 'ComponentsConfiguration':
         tag =
           StringValues.Components[tag[0]] +
           StringValues.Components[tag[1]] +
           StringValues.Components[tag[2]] +
-          StringValues.Components[tag[3]]
-        break
+          StringValues.Components[tag[3]];
+        break;
       }
-      tags[tagName] = tag
+      tags[tagName] = tag;
     }
   }
 
   if (GPSInfoIFDPointer) {
-    const gpsData = readTags(file, tiffOffset, tiffOffset + GPSInfoIFDPointer, GPSTags, bigEnd)
+    const gpsData = readTags(file, tiffOffset, tiffOffset + GPSInfoIFDPointer, GPSTags, bigEnd);
     for (tagName in gpsData) {
-      let tag = gpsData[tagName]
+      let tag = gpsData[tagName];
       switch (tagName) {
       case 'GPSVersionID': {
-        const [t,t1,t2,t3] = tag
-        tag = [t,t1,t2,t3].join('.')
-        break
+        const [t,t1,t2,t3] = tag;
+        tag = [t,t1,t2,t3].join('.');
+        break;
       }}
-      tags[tagName] = tag
+      tags[tagName] = tag;
     }
     if (coordinates == 'dd') {
       if (tags['GPSLongitude']) {
-        const [deg,min,sec] = tags['GPSLongitude']
-        tags['GPSLongitude'] = dms2dd(deg, min, sec, tags['GPSLongitudeRef'])
+        const [deg,min,sec] = tags['GPSLongitude'];
+        tags['GPSLongitude'] = dms2dd(deg, min, sec, tags['GPSLongitudeRef']);
       }
       if (tags['GPSLatitude']) {
-        const [deg,min,sec] = tags['GPSLatitude']
-        tags['GPSLatitude'] = dms2dd(deg, min, sec, tags['GPSLatitudeRef'])
+        const [deg,min,sec] = tags['GPSLatitude'];
+        tags['GPSLatitude'] = dms2dd(deg, min, sec, tags['GPSLatitudeRef']);
       }
     }
   }
 
-  tags['thumbnail'] = readThumbnailImage(file, tiffOffset, firstIFDOffset, bigEnd)
+  tags['thumbnail'] = readThumbnailImage(file, tiffOffset, firstIFDOffset, bigEnd);
 
-  return tags
+  return tags;
 }
 
 const StringValues = {
@@ -305,7 +305,7 @@ const StringValues = {
     [5]: 'G',
     [6]: 'B',
   },
-}
+};
 
 /**
  * @suppress {nonStandardJsDocs}

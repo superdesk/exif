@@ -32,6 +32,6 @@ const TiffTags = {
   [0x0131]: 'Software',
   [0x013B]: 'Artist',
   [0x8298]: 'Copyright',
-}
+};
 
-export default TiffTags
+export default TiffTags;

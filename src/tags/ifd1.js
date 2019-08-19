@@ -19,6 +19,6 @@ const IFD1Tags = {
   [0x0212]: 'YCbCrSubSampling',
   [0x0213]: 'YCbCrPositioning',
   [0x0214]: 'ReferenceBlackWhite',
-}
+};
 
-export default IFD1Tags
+export default IFD1Tags;

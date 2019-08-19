@@ -1,6 +1,6 @@
 // import { resolve } from 'path'
 // import { debuglog } from 'util'
-import { readBuffer } from '@wrote/read'
+import { readBuffer } from '@wrote/read';
 
 // const FIXTURE = resolve('test/fixture')
 
@@ -9,7 +9,7 @@ import { readBuffer } from '@wrote/read'
  */
 export default class Context {
   async _init() {
-    this.photo = (await readBuffer('test/fixture/images/photo.jpg')).buffer
+    this.photo = (await readBuffer('test/fixture/images/photo.jpg')).buffer;
     // LOG('init context')
   }
   /**

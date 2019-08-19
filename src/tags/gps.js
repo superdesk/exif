@@ -30,6 +30,6 @@ const GPSTags = {
   [0x001C]: 'GPSAreaInformation',
   [0x001D]: 'GPSDateStamp',
   [0x001E]: 'GPSDifferential',
-}
+};
 
-export default GPSTags
+export default GPSTags;

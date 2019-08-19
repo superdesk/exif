@@ -4,10 +4,10 @@
  * Converts Degrees to numerical coordinates.
  */
 export const dms2dd = (deg, min, sec, dir) => {
-  const dd = deg + min/60 + sec/(60*60)
-  const i = (dir == 'S' || dir == 'W') ? -1 : 1
-  return dd * i
-}
+  const dd = deg + min/60 + sec/(60*60);
+  const i = (dir == 'S' || dir == 'W') ? -1 : 1;
+  return dd * i;
+};
 
 // RobG
 // https://stackoverflow.com/a/43084928/1267201
@@ -15,6 +15,6 @@ export const dms2dd = (deg, min, sec, dir) => {
  * Converts EXIF date to JS date.
  */
 export const getDate = (s) => {
-  const [year, month, date, hour, min, sec] = s.split(/\D/)
-  return new Date(year, month-1, date, hour, min, sec)
-}
+  const [year, month, date, hour, min, sec] = s.split(/\D/);
+  return new Date(year, month-1, date, hour, min, sec);
+};
