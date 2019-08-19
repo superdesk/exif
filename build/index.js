@@ -1,5 +1,5 @@
-const findIPTCinJPEG = require('./lib/iptc');
-const { findEXIFinJPEG } = require('./lib/exif');
+const findIPTCinJPEG = require('./lib/iptc');;
+const { findEXIFinJPEG } = require('./lib/exif');;
 
 /**
  * Extract metadata from the ArrayBuffer.
@@ -9,9 +9,9 @@ const { findEXIFinJPEG } = require('./lib/exif');
  * @param {string} [config.coordinates="dms"] Return coordinates either as DMS (degrees, minutes, seconds) or DD (decimal degrees). Specified as `'dms'` or `'dd'`. Default `dms`.
  */
        function handleBinaryFile(binFile, config) {
-  const data = findEXIFinJPEG(binFile, config)
-  const iptcdata = findIPTCinJPEG(binFile)
-  return { 'data': data, 'iptcdata': iptcdata }
+  const data = findEXIFinJPEG(binFile, config);
+  const iptcdata = findIPTCinJPEG(binFile);
+  return { 'data': data, 'iptcdata': iptcdata };
 }
 
 /* documentary types/index.xml */

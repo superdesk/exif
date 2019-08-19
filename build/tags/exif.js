@@ -71,6 +71,6 @@ const ExifTags = {
   // other tags
   [0xA005]: 'InteroperabilityIFDPointer',
   [0xA420]: 'ImageUniqueID',            // Identifier assigned uniquely to each image
-}
+};
 
-module.exports=ExifTags
+module.exports=ExifTags;

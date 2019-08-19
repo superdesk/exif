@@ -1,5 +1,5 @@
-const IFD1Tags = require('../tags/ifd1');
-const { readTags } = require('./');
+const IFD1Tags = require('../tags/ifd1');;
+const { readTags } = require('./');;
 
 /**
  * @param {DataView} dataView
@@ -9,19 +9,19 @@ const { readTags } = require('./');
  */
                function readThumbnailImage(dataView, tiffStart, firstIFDOffset, bigEnd) {
   // get the IFD1 offset
-  var IFD1OffsetPointer = getNextIFDOffset(dataView, tiffStart+firstIFDOffset, bigEnd)
+  var IFD1OffsetPointer = getNextIFDOffset(dataView, tiffStart+firstIFDOffset, bigEnd);
 
   if (!IFD1OffsetPointer) {
     // console.log('******** IFD1Offset is empty, image thumb not found ********');
-    return {}
+    return {};
   }
   else if (IFD1OffsetPointer > dataView.byteLength) { // this should not happen
     // console.log('******** IFD1Offset is outside the bounds of the DataView ********');
-    return {}
+    return {};
   }
   // console.log('*******  thumbnail IFD offset (IFD1) is: %s', IFD1OffsetPointer);
 
-  const thumbTags = readTags(dataView, tiffStart, tiffStart + IFD1OffsetPointer, IFD1Tags, bigEnd)
+  const thumbTags = readTags(dataView, tiffStart, tiffStart + IFD1OffsetPointer, IFD1Tags, bigEnd);
 
   // EXIF 2.3 specification for JPEG format thumbnail
 
@@ -39,25 +39,25 @@ const { readTags } = require('./');
       // console.log('Thumbnail image format is JPEG');
       if (thumbTags.JpegIFOffset && thumbTags.JpegIFByteCount) {
         // extract the thumbnail
-        var tOffset = tiffStart + thumbTags.JpegIFOffset
-        var tLength = thumbTags.JpegIFByteCount
+        var tOffset = tiffStart + thumbTags.JpegIFOffset;
+        var tLength = thumbTags.JpegIFByteCount;
         thumbTags['blob'] = new Blob([new Uint8Array(dataView.buffer, tOffset, tLength)], {
           type: 'image/jpeg',
-        })
+        });
       }
-      break
+      break;
 
     case 1:
-      console.log('Thumbnail image format is TIFF, which is not implemented.')
-      break
+      console.log('Thumbnail image format is TIFF, which is not implemented.');
+      break;
     default:
-      console.log('Unknown thumbnail image format \'%s\'', thumbTags['Compression'])
+      console.log('Unknown thumbnail image format \'%s\'', thumbTags['Compression']);
     }
   }
   else if (thumbTags['PhotometricInterpretation'] == 2) {
-    console.log('Thumbnail image format is RGB, which is not implemented.')
+    console.log('Thumbnail image format is RGB, which is not implemented.');
   }
-  return thumbTags
+  return thumbTags;
 }
 
 /**
@@ -67,13 +67,13 @@ const { readTags } = require('./');
  */
 function getNextIFDOffset(dataView, dirStart, bigEnd){
   //the first 2bytes means the number of directory entries contains in this IFD
-  var entries = dataView.getUint16(dirStart, !bigEnd)
+  var entries = dataView.getUint16(dirStart, !bigEnd);
 
   // After last directory entry, there is a 4bytes of data,
   // it means an offset to next IFD.
   // If its value is '0x00000000', it means this is the last IFD and there is no linked IFD.
 
-  return dataView.getUint32(dirStart + 2 + entries * 12, !bigEnd) // each entry is 12 bytes long
+  return dataView.getUint32(dirStart + 2 + entries * 12, !bigEnd); // each entry is 12 bytes long
 }
 
 module.exports = readThumbnailImage
