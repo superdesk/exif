@@ -41,45 +41,87 @@ const debug = false
 }
 
 // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/IPTC.html
-const IptcFieldMap = {
-  [120]: 'Caption-Abstract', // string[0,2000]
-  [110]: 'Credit', // string[0,32]
-  [25]: 'Keywords', // string[0,64]+
-  [55]: 'DateCreated', // digits[8]
-  [80]: 'By-line', // string[0,32]+
-  [85]: 'By-lineTitle', // string[0,32]+
-  [122]: 'Writer-Editor', // string[0,32]+
-  [105]: 'Headline', // string[0,256]
-  [116]: 'CopyrightNotice', // string[0,128]
-  [15]: 'Category', // string[0,3]
+
+const IPTCEnvelopeMap = {
+  [5]: 'Destination',
+  [30]: 'ServiceIdentifier',
+  [50]: 'ProductID',
+  [70]: 'DateSent',
+  [80]: 'TimeSent',
+}
+
+const IPTCApplicationMap = {
+  [5]: 'ObjectName',
+  [7]: 'EditStatus',
+  [10]: 'Urgency',
+  [12]: 'SubjectReference',
+  [15]: 'Category',
+  [20]: 'SupplementalCategories',
+  [25]: 'Keywords',
+  [26]: 'ContentLocationCode',
+  [27]: 'ContentLocationName',
+  [30]: 'ReleaseDate',
+  [35]: 'ReleaseTime',
+  [37]: 'ExpirationDate',
+  [38]: 'ExpirationTime',
+  [40]: 'SpecialInstructions',
+  [55]: 'DateCreated',
+  [60]: 'TimeCreated',
+  [80]: 'By-line',
+  [85]: 'By-lineTitle',
+  [90]: 'City',
+  [92]: 'Sub-location',
+  [95]: 'Province-State',
+  [100]: 'Country-PrimaryLocationCode',
+  [101]: 'Country-PrimaryLocationName',
+  [103]: 'OriginalTransmissionReference',
+  [105]: 'Headline',
+  [110]: 'Credit',
+  [115]: 'Source',
+  [116]: 'CopyrightNotice',
+  [118]: 'Contact',
+  [120]: 'Caption-Abstract',
+  [122]: 'Writer-Editor',
+  [135]: 'LanguageIdentifier',
 }
 
 function readIPTCData(file, startOffset, sectionLength){
   const dataView = new DataView(file)
   var data = {}
-  let fieldValue, fieldName, dataSize, segmentType
+  let fieldValue, fieldName, dataSize, segmentType, map
   let segmentStartPos = startOffset
   while(segmentStartPos < startOffset + sectionLength) {
-    if(dataView.getUint8(segmentStartPos) === 0x1C && dataView.getUint8(segmentStartPos+1) === 0x02){
-      segmentType = dataView.getUint8(segmentStartPos+2)
-      if(segmentType in IptcFieldMap) {
-        dataSize = dataView.getInt16(segmentStartPos+3)
-        fieldName = IptcFieldMap[segmentType]
-        fieldValue = getStringFromDB(dataView, segmentStartPos+5, dataSize)
-        // Check if we already stored a value with this name
-        if(data.hasOwnProperty(fieldName)) {
-          // Value already stored with this name, create multivalue field
-          if(data[fieldName] instanceof Array) {
-            data[fieldName].push(fieldValue)
-          }
-          else {
-            data[fieldName] = [data[fieldName], fieldValue]
-          }
-        }
-        else {
-          data[fieldName] = fieldValue
-        }
+    if(dataView.getUint8(segmentStartPos) === 0x1C){
+      if(dataView.getUint8(segmentStartPos+1) === 0x01) {
+        map = IPTCEnvelopeMap
       }
+      else if(dataView.getUint8(segmentStartPos+1) === 0x02) {
+        map = IPTCApplicationMap
+      }
+      else {
+        map = null
+      }
+      if(map != null) {
+          segmentType = dataView.getUint8(segmentStartPos+2)
+          if(segmentType in map) {
+            dataSize = dataView.getInt16(segmentStartPos+3)
+            fieldName = map[segmentType]
+            fieldValue = getStringFromDB(dataView, segmentStartPos+5, dataSize)
+            // Check if we already stored a value with this name
+            if(data.hasOwnProperty(fieldName)) {
+              // Value already stored with this name, create multivalue field
+              if(data[fieldName] instanceof Array) {
+                data[fieldName].push(fieldValue)
+              }
+              else {
+                data[fieldName] = [data[fieldName], fieldValue]
+              }
+            }
+            else {
+              data[fieldName] = fieldValue
+            }
+          }
+        }
     }
     segmentStartPos++
   }
@@ -96,5 +138,6 @@ function isFieldSegmentStart(dataView, offset){
     dataView.getUint8(offset+5) === 0x04
   )
 }
+
 
 module.exports = findIPTCinJPEG
