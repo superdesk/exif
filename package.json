@@ -22,6 +22,7 @@
   },
   "files": [
     "build",
+    "dist",
     "src",
     "types/externs.js"
   ],
