@@ -1,0 +1,71 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var _a;
+var ExifTags = (_a = {},
+    // version tags
+    _a[0x9000] = 'ExifVersion',
+    _a[0xA000] = 'FlashpixVersion',
+    // colorspace tags
+    _a[0xA001] = 'ColorSpace',
+    // image configuration
+    _a[0xA002] = 'PixelXDimension',
+    _a[0xA003] = 'PixelYDimension',
+    _a[0x9101] = 'ComponentsConfiguration',
+    _a[0x9102] = 'CompressedBitsPerPixel',
+    // user information
+    _a[0x927C] = 'MakerNote',
+    _a[0x9286] = 'UserComment',
+    // related file
+    _a[0xA004] = 'RelatedSoundFile',
+    // date and time
+    _a[0x9003] = 'DateTimeOriginal',
+    _a[0x9004] = 'DateTimeDigitized',
+    _a[0x9290] = 'SubsecTime',
+    _a[0x9291] = 'SubsecTimeOriginal',
+    _a[0x9292] = 'SubsecTimeDigitized',
+    // picture-taking conditions
+    _a[0x829A] = 'ExposureTime',
+    _a[0x829D] = 'FNumber',
+    _a[0x8822] = 'ExposureProgram',
+    _a[0x8824] = 'SpectralSensitivity',
+    _a[0x8827] = 'ISOSpeedRatings',
+    _a[0x8828] = 'OECF',
+    _a[0x9201] = 'ShutterSpeedValue',
+    _a[0x9202] = 'ApertureValue',
+    _a[0x9203] = 'BrightnessValue',
+    _a[0x9204] = 'ExposureBias',
+    _a[0x9205] = 'MaxApertureValue',
+    _a[0x9206] = 'SubjectDistance',
+    _a[0x9207] = 'MeteringMode',
+    _a[0x9208] = 'LightSource',
+    _a[0x9209] = 'Flash',
+    _a[0x9214] = 'SubjectArea',
+    _a[0x920A] = 'FocalLength',
+    _a[0xA20B] = 'FlashEnergy',
+    _a[0xA20C] = 'SpatialFrequencyResponse',
+    _a[0xA20E] = 'FocalPlaneXResolution',
+    _a[0xA20F] = 'FocalPlaneYResolution',
+    _a[0xA210] = 'FocalPlaneResolutionUnit',
+    _a[0xA214] = 'SubjectLocation',
+    _a[0xA215] = 'ExposureIndex',
+    _a[0xA217] = 'SensingMethod',
+    _a[0xA300] = 'FileSource',
+    _a[0xA301] = 'SceneType',
+    _a[0xA302] = 'CFAPattern',
+    _a[0xA401] = 'CustomRendered',
+    _a[0xA402] = 'ExposureMode',
+    _a[0xA403] = 'WhiteBalance',
+    _a[0xA404] = 'DigitalZoomRation',
+    _a[0xA405] = 'FocalLengthIn35mmFilm',
+    _a[0xA406] = 'SceneCaptureType',
+    _a[0xA407] = 'GainControl',
+    _a[0xA408] = 'Contrast',
+    _a[0xA409] = 'Saturation',
+    _a[0xA40A] = 'Sharpness',
+    _a[0xA40B] = 'DeviceSettingDescription',
+    _a[0xA40C] = 'SubjectDistanceRange',
+    // other tags
+    _a[0xA005] = 'InteroperabilityIFDPointer',
+    _a[0xA420] = 'ImageUniqueID',
+    _a);
+exports.default = ExifTags;
